@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Menu,
   X,
@@ -31,6 +31,25 @@ export default function HomePage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [testimonialIndex, setTestimonialIndex] = useState(0)
+  const [visibleSteps, setVisibleSteps] = useState<number[]>([])
+
+  const howItWorksSteps = [
+    { number: 1, title: 'Conecta tu equipo' },
+    { number: 2, title: 'Crea tableros' },
+    { number: 3, title: 'Asigna tareas' },
+    { number: 4, title: 'Mide resultados' }
+  ]
+
+  useEffect(() => {
+    const timers: NodeJS.Timeout[] = []
+    howItWorksSteps.forEach((_, index) => {
+      const timer = setTimeout(() => {
+        setVisibleSteps(prev => [...prev, index])
+      }, index * 300)
+      timers.push(timer)
+    })
+    return () => timers.forEach(timer => clearTimeout(timer))
+  }, [])
 
   const navLinks = [
     { label: 'Features', href: '#features' },
@@ -435,6 +454,43 @@ export default function HomePage() {
                   {stat.value}
                 </div>
                 <div className="text-sm" style={{ color: '#64748B' }}>{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cómo funciona */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#132240' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Cómo funciona
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto" style={{ color: '#64748B' }}>
+              Empieza a gestionar tus proyectos en 4 simples pasos
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {howItWorksSteps.map((step, index) => (
+              <div
+                key={step.number}
+                className="text-center transition-all duration-500"
+                style={{
+                  opacity: visibleSteps.includes(index) ? 1 : 0,
+                  transform: visibleSteps.includes(index) ? 'translateY(0)' : 'translateY(20px)'
+                }}
+              >
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold"
+                  style={{ backgroundColor: 'rgba(132, 204, 22, 0.1)', color: '#84CC16' }}
+                >
+                  {step.number}
+                </div>
+                <h3 className="text-xl font-semibold" style={{ color: '#F8FAFC' }}>
+                  {step.title}
+                </h3>
               </div>
             ))}
           </div>
